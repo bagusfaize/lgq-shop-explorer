@@ -9,7 +9,7 @@ export default function Header() {
   const displayedQuantity = cartQuantity < 10 ? cartQuantity : "9+";
 
   return (
-    <header className="bg-white border-b border-gray-100 sticky top-0 z-10">
+    <header className="bg-white border-b border-gray-100 sticky top-0 z-10 shadow-sm">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link
           to="/"

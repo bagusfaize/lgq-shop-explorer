@@ -43,7 +43,7 @@ export default function ProductFilter({
     return (
         <form
             onSubmit={handleSubmit}
-            className="flex justify-center items-center w-full max-w-xl gap-3"
+            className="flex justify-between items-center w-full max-w-xl gap-1 sm:gap-3"
         >
             <div className="w-full sm:w-1/3">
                     <select
@@ -63,7 +63,7 @@ export default function ProductFilter({
             <div className="relative flex items-center w-full">
                 <input
                     type="text"
-                    placeholder="Search products..."
+                    placeholder="Search..."
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     className="w-full px-5 py-3 border border-gray-300 rounded-xl text-gray-800 focus:ring-3 focus:ring-indigo-300 transition-all shadow-sm outline-none"

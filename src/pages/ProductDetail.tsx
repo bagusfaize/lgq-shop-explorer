@@ -34,8 +34,6 @@ export default function ProductDetail() {
 
   const isProductOnCart = items.find((c) => c.product.id === product?.id) ?? false;
 
-  console.log('clg isProductOnCart', isProductOnCart);
-
   if (isLoading) {
     return <div className="text-center py-10 text-gray-600">Loading product...</div>;
   }
@@ -109,7 +107,7 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2">
             {isProductOnCart ?
               <QuantityButton
                 productId={product.id}
