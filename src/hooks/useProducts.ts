@@ -3,13 +3,15 @@ import { getProducts, getCategories } from "../api/products";
 
 const PAGE_LIMIT = 12;
 
-export const useInfiniteProducts = () =>
+export const useInfiniteProducts = (filters?: { title?: string; categoryId?: number }) =>
     useInfiniteQuery({
-        queryKey: ["products-infinite", { limit: PAGE_LIMIT }],
+        queryKey: ["products", filters],
         queryFn: ({ pageParam = 0 }) =>
             getProducts({
                 limit: PAGE_LIMIT,
-                offset: pageParam
+                offset: pageParam,
+                title: filters?.title,
+                categoryId: filters?.categoryId,
             }),
         getNextPageParam: (lastPage, allPages) => {
             if (lastPage.length < PAGE_LIMIT) {

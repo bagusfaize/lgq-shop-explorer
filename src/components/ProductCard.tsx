@@ -27,12 +27,11 @@ export default function ProductCard({ product }: { product: Product }) {
                         ${product.price}
                     </span>
 
-                    <Link
-                        to={`/product/${product.id}`}
+                    <button
                         className="text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg px-4 py-2 shadow-md transition-colors duration-200"
                     >
                         View Product
-                    </Link>
+                    </button>
                 </div>
             </div>
         </Link>
