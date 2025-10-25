@@ -1,9 +1,13 @@
 import { Link } from "react-router-dom";
 import { FiShoppingCart } from "react-icons/fi";
 import { RiShoppingBag2Fill } from "react-icons/ri";
+import { useCartStore } from "../store/cartStore";
 
 export default function Header() {
-// todo get cart from store 
+  // todo get cart from store 
+  const cartQuantity = useCartStore((state) => state.totalItems());
+  const displayedQuantity = cartQuantity < 10 ? cartQuantity : "9+";
+
   return (
     <header className="bg-white border-b border-gray-100 sticky top-0 z-10">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
@@ -25,11 +29,14 @@ export default function Header() {
             className="relative p-2 text-gray-500 hover:text-indigo-600 transition-colors duration-150"
           >
             <FiShoppingCart className="h-6 w-6" />
-            <span className="absolute top-0 right-0 bg-red-600 text-white rounded-full h-4 w-4 flex items-center justify-center text-xs font-medium">
-              {0}
-            </span>
+            {cartQuantity !== 0 &&
+              <span className="absolute top-0 right-0 bg-red-600 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs font-medium">
+                {displayedQuantity}
+              </span>
+            }
           </Link>
         </nav>
+
       </div>
     </header>
   );

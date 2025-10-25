@@ -1,11 +1,19 @@
-import React from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getProductById } from "../api/products";
+import { GoChevronRight, GoPlus } from "react-icons/go";
+import { useCartStore } from "../store/cartStore";
+import QuantityButton from "../components/QuantityButton";
 
 export default function ProductDetail() {
-  const { id } = useParams(); // read ":id" from route
+  const { id } = useParams();
   const navigate = useNavigate();
+
+  const addToCart = useCartStore((state) => state.addItem);
+  const incrementItem = useCartStore((state) => state.incrementItem);
+  const decrementItem = useCartStore((state) => state.decrementItem);
+
+  const items = useCartStore((state) => state.items);
 
   const {
     data: product,
@@ -17,7 +25,16 @@ export default function ProductDetail() {
     enabled: !!id,
   });
 
-  console.log('clg product', product);
+  const handleAddToCart = () => {
+    // to do optimistic update tanstack
+    if (product) {
+      addToCart(product, 1);
+    }
+  }
+
+  const isProductOnCart = items.find((c) => c.product.id === product?.id) ?? false;
+
+  console.log('clg isProductOnCart', isProductOnCart);
 
   if (isLoading) {
     return <div className="text-center py-10 text-gray-600">Loading product...</div>;
@@ -42,54 +59,77 @@ export default function ProductDetail() {
   const image = product.images?.[0] ?? product.image ?? "";
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
-      <div className="flex items-center justify-center bg-white rounded shadow p-6">
-        <img
-          src={image}
-          alt={product.title}
-          className="max-h-[400px] object-contain"
-        />
+    <div>
+      <div className="flex gap-1 items-center text-sm font-semibold text-slate-700">
+        <Link to={"/"}>
+          Product List
+        </Link>
+        <span><GoChevronRight /></span>
+        <span className="capitalize text-slate-500">{`${product.title}`}</span>
       </div>
 
-      <div className="flex flex-col justify-between">
-        <div>
-          <span className="inline-flex text-sm font-medium text-indigo-600 uppercase tracking-wider bg-indigo-50 px-3 py-1 rounded-full">
-            {product.category.name}
-          </span>
-          <h1 className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl capitalize">
-            {product.title}
-          </h1>
-          <p className="mt-4 text-3xl font-bold text-gray-900">
-            <span className="text-indigo-600">
-              ${product.price}
-            </span>
-          </p>
-        </div>
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            Details
-          </h3>
-          <p className="text-sm text-gray-500">
-            Product ID: <span className="font-mono">
-              {product.id}
-            </span>
-          </p>
-          <p className="text-sm text-gray-500">
-            Product Description: <span className="font-mono">
-              {product.description}
-            </span>
-          </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
+        <div className="flex items-center justify-center bg-white rounded-xl shadow p-6">
+          <img
+            src={image}
+            alt={product.title}
+            className="max-h-[400px] object-contain"
+          />
         </div>
 
-        <button
-          type="button"
-          // todo
-          // onClick={handleAddToCart}
-          className="mt-8 w-full lg:w-3/4 bg-indigo-600 border border-transparent rounded-lg py-3 flex items-center justify-center text-lg font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition-all duration-200 shadow-xl shadow-indigo-200"
-        >
-          Add to Cart
-        </button>
+        <div className="flex flex-col justify-between">
+          <div>
+            <h1 className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-4xl capitalize wrap-break-word">
+              {product.title}
+            </h1>
+            <p className="mt-4 text-3xl font-bold text-gray-900">
+              <span className="text-indigo-600">
+                ${product.price}
+              </span>
+            </p>
+          </div>
+          <div className="mt-6">
+            <div className="mb-3">
+              <p className="text-sm font-medium text-gray-900">Product ID:</p>
+              <span className="text-base text-gray-700">
+                {product.id}
+              </span>
+            </div>
+            <div className="mb-3">
+              <p className="text-sm font-medium text-gray-900">Product Description:</p>
+              <span className="text-base text-gray-700 block">
+                {product.description}
+              </span>
+            </div>
+            <div className="mb-3">
+              <p className="text-sm font-medium text-gray-900">Product Category:</p>
+              <span className="text-base text-gray-700 block">
+                {product.category.name}
+              </span>
+            </div>
+          </div>
 
+          <div className="grid grid-cols-2">
+            {isProductOnCart ?
+              <QuantityButton
+                productId={product.id}
+                quantity={isProductOnCart.quantity}
+                onDecrement={decrementItem}
+                onIncrement={incrementItem}
+              />
+              :
+              <button
+                type="button"
+                onClick={handleAddToCart}
+                className="w-full bg-indigo-600 border border-transparent rounded-lg py-3 flex items-center justify-center text-lg font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition-all duration-200 shadow-xl shadow-indigo-200 cursor-pointer"
+              >
+                <GoPlus className="mr-2" />
+                Add to Cart
+              </button>
+            }
+          </div>
+
+        </div>
       </div>
     </div>
   );
